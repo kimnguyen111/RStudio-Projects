@@ -1,0 +1,361 @@
+---
+title: "econ 467 - homework 2"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-02-02"
+---
+
+```{r}
+setwd("/Users/kimberlynguyen/Desktop")
+
+library(fpp2)
+library(readxl)
+library(tidyverse)
+```
+
+```{r}
+#1a. Provide a screenshot of the Excel file. How is the variable defined and what is the source of the data?
+
+data = read_xls("/Users/kimberlynguyen/Desktop/econ 467 - homework 3/CPIAUCSL (1).xls")
+view(data)
+
+#The variable that we are observing is named "CPIAUCSL" and its source is from the U.S. Bureau of Labor Statistics
+```
+
+![](images/Screenshot%202024-02-05%20at%2012.30.21%20PM-02.png)
+
+```{r}
+#1b. Provide a time series plot of the series using R. What characteristics of the series stand out to you from this visual?
+
+#Remove all obstructing information from the Excel file, then convert it into an .xlsx file
+newdata = read_xlsx("/Users/kimberlynguyen/Desktop/econ 467 - homework 2/CPIAUCSL.xlsx")
+view(newdata)
+
+#Checking whether or not this data set is a ts, turns out to be FALSE
+is.ts(newdata)
+
+#Converting the data set into a time series
+cpiusa = ts(newdata[,2], start=c(1947,1), frequency=12)
+view(cpiusa)
+is.ts(cpiusa)
+
+#Plotting the converted data set
+autoplot(cpiusa, facets=TRUE)
+
+#The most obvious characteristic of this graph is that there is an upward sloping trend
+```
+
+```{r}
+#1c. Does this series seem to be coming from a stationary stochastic process? Why or why not?
+
+#This does not seem to be coming from a stationary stochastic process because there aren't any consistent fluctuations, rather there is a smooth increase 
+```
+
+```{r}
+#1d. In the Excel file, generate the first difference of the CPI.
+```
+
+![](images/Screenshot%202024-02-05%20at%201.24.15%20PM.png)
+
+```{r}
+#1e. Using R, generate and plot the first difference of the CPI. Does this differenced series seem to be stationary? Why?
+
+autoplot(diff(cpiusa))
+
+#Yes, the differenced series does seem to ve stationary because it has an obvious fluctuating pattern 
+```
+
+```{r}
+#1f. Using Excel, generate the first difference of the logarithms of the CPI multiplied by 100. Turn in the excel file with your homework.
+```
+
+![](images/Screenshot%202024-02-05%20at%201.24.15%20PM-01.png)
+
+```{r}
+#1g. Using R, generate and plot the first difference of the logarithms of the CPI multiplied by 100. Does this differenced series seem to be stationary? Why?
+
+autoplot(diff(log(cpiusa)*100))
+
+#This difference also seems to be stationary because we can observe the consistent fluctuating pattern.
+```
+
+```{r}
+#1h. How do you interpret the last series, viz., the difference in the logarithm of CPI times 100?
+
+#In the graph above, we can see that the percent rate of change for the most part is stationary, that is there is no obvious upwards or downwards sloping trend. 
+
+
+```
+
+```{r}
+#1i. In R, generate the monthly percentage change in CPI. Plot this new series along with the series you generated in 1(g) (the first difference of the logarithms of the CPI multiplied by 100) in the same plot. What do you see? Do the two series look similar or different?
+
+#Plot of 1g
+
+difflogcpi = diff(log(cpiusa)*100)
+autoplot(difflogcpi)
+```
+
+```{r}
+#1i. Generating the monthly percentage change in CPI.
+
+percent_cpi = (diff(cpiusa)/stats::lag(cpiusa, -1)*100)
+cbind(difflogcpi, percent_cpi) %>% autoplot(linetype="dashed")
+
+#The series look exactly the same. The only difference are the colored dashed lines in the 1i graph. 
+```
+
+```{r}
+#2.10 Exercise 3. Download some monthly Australian retail data from the book website. These represent retail sales in various categories for different Australian states, and are stored in a MS-Excel file.
+
+#a. You can read the data into R with the following script:
+
+retaildata = read_xlsx("/Users/kimberlynguyen/Desktop/econ 467 - homework 2/retail.xlsx", skip=1)
+view(retaildata)
+```
+
+```{r}
+#b. Select one of the time series as follows (but replace the column name with your own chosen column):
+
+myts <- ts(retaildata[,"A3349873A"],
+  frequency=12, start=c(1982,4))
+```
+
+```{r}
+#c. Explore your chosen retail time series using the following functions: autoplot(), ggseasonplot(), ggsubseriesplot(), gglagplot(), ggAcf().
+
+autoplot(myts)
+
+#There is a strong increasing trend with strong seasonality. There is no evidence of cyclical trend.
+```
+
+```{r}
+#c 
+
+ggseasonplot(myts)
+
+##There was a large increase in after November. There was a 
+```
+
+```{r}
+#c
+
+ggsubseriesplot(myts)
+
+#This graph shows the seasonality over time. Since the horizontal lines represent the mean, we can also observe that there was a large increase in December. 
+```
+
+```{r}
+#c
+
+gglagplot(myts)
+
+#We can see in all of these lag plots that there is an upwards sloping trend, but it is especially strong in the lag 12 plot.
+```
+
+```{r}
+#c
+
+ggAcf(myts)
+
+#The slight inward scalloping trend is due to seasonality. Overall, there is a very slight downards sloping trend.
+```
+
+```{r}
+#6. Use the following graphics functions: autoplot(), ggseasonplot(), ggsubseriesplot(), gglagplot(), ggAcf() and explore features from the following time series: hsales, usdeaths, bricksq, sunspotarea, gasoline.
+
+#hsales
+
+autoplot(hsales)
+
+#There is seasonality, and a pattern of cyclic behavior every 5-10 years.
+```
+
+```{r}
+#hsales
+
+ggseasonplot(hsales)
+
+#There is a large increase in sales in February, especially in the year 1986.
+```
+
+```{r}
+#hsales
+
+ggsubseriesplot(hsales)
+
+#This shows seasonality over time. Specifically, there seems to be an upwards sloping trend up until March where there is an obvious downwards trend appearing. 
+```
+
+```{r}
+#hsales
+
+gglagplot(hsales)
+
+#I would say that lag 1 and 2 have the strongest upwards sloping trend. From lag 3-12, there is an upwards sloping trend as well, but it gets confusing from lag 13-16, where the plots morph into a circular shape. 
+```
+
+```{r}
+#hsales
+
+ggAcf(hsales)
+
+#There is a scalloping trend with a slow downwards sloping trend. At lag 18, there is a dip in the autocorrelation.
+```
+
+```{r}
+#usdeaths
+
+autoplot(usdeaths)
+
+#The seasonality is obvious here, but not strong. We can see that there is no signs of cyclicality, rather it is quite stationary.
+```
+
+```{r}
+#usdeaths
+
+ggseasonplot(usdeaths)
+
+#This seasonal plot has an obvious peak in July, indicating that there was an unusual amount of usdeaths. April of 1975 experienced an usually low amount of deaths.
+```
+
+```{r}
+#usdeaths
+
+ggsubseriesplot(usdeaths)
+
+#The seasonality is not strong here. However, there is an obvious cyclical trend appearing every 6 months, with a low number of deaths in Februrary, a high number in July, and a low number in November.
+```
+
+```{r}
+#usdeaths
+
+gglagplot(usdeaths)
+
+#Lag 1,2,11,12,13,14 all have an upwards sloping trend. Lag 3,4,9,10,15 seem to have more of a circular pattern. Lag 5,6,7,8,16 actually show more of a negative correlation. 
+```
+
+```{r}
+#usdeaths
+
+ggAcf(usdeaths)
+
+#There is a scalloping trend here, the fluctuates every 6-12 months. As the lag increases, the autocorrelation fluctuates. 
+```
+
+```{r}
+#bricksq
+
+autoplot(bricksq)
+
+# The seasonality is not super strong here, bit there seems to be an upwards sloping trend up until the 1970s, where it develops more of a cyclical pattern.
+```
+
+```{r}
+#bricksq
+
+ggseasonplot(bricksq)
+
+#This graph is relatively stationary 
+```
+
+```{r}
+#bricksq
+
+ggsubseriesplot(bricksq)
+
+#The seasonality is not super strong, but it increases and then goes into a more stationary pattern. We can see that overall, it is stationary because of where the mean lines are.
+```
+
+```{r}
+#bricksq
+
+gglagplot(bricksq)
+
+#All of these lag plots have an obvious upwards sloping trend. The interesting thing is the concentration as the lag increases. 
+```
+
+```{r}
+#bricksq
+
+ggAcf(bricksq)
+
+#There is a smaller scalloping trend here, but overall there is a slow negative sloping trend.
+
+```
+
+```{r}
+#sunspotarea
+
+autoplot(sunspotarea)
+
+#The seasonality is not strong here.I would say that it is quite stationary despite the obvious increase in the 1950s.  
+
+```
+
+```{r}
+#sunspotarea
+
+#The data is not seasonal, so it cannot plot
+```
+
+```{r}
+#sunspotarea
+
+#The data is not seasonal, so it cannot plot
+```
+
+```{r}
+#sunspotarea
+
+gglagplot(sunspotarea)
+
+#This is the perfect example of a cyclical trend. All lags are cyclical, but lag 1,2,3,8,9 are more upwards sloping. Lag 4,5,6,7 have a more negative sloping trend. 
+```
+
+```{r}
+#sunspotarea
+
+ggAcf(sunspotarea)
+
+#Scalloping is present in this graph. The peaks tend to be 5 lags apart.
+```
+
+```{r}
+#gasoline
+
+autoplot(gasoline)
+
+#There is an upwards sloping trend up until 2007, where it develops into a more stationary trend.
+```
+
+```{r}
+#gasoline
+
+ggseasonplot(gasoline)
+
+#This seasonal plot may look crazy, but it just shows seasonality and actually, there is quite a stationary trend overall.
+```
+
+```{r}
+#gasoline
+
+#Cannot be plotted without at least 2 observations
+```
+
+```{r}
+#gasoline
+
+gglagplot(gasoline)
+
+#All lag plots have a very obvious upwards sloping trend.
+```
+
+```{r}
+#gasoline
+
+ggAcf(gasoline)
+
+#Slight scalloping, but overall a slight decreasing trend.
+```

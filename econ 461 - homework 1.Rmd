@@ -1,0 +1,163 @@
+---
+title: "econ 461 - homework 1"
+name: Kimberly Nguyen
+date: "2024-01-26"
+output:
+  pdf_document: default
+---
+
+```{r}
+library(fpp2)
+help(gold)
+help(woolyrnq)
+help(gas)
+```
+
+```{r}
+#Question 1. Use the help function to explore what the series gold, woolyrnq and gas represent. 
+
+#a. Use autoplot() to plot each of these in separate plots.
+
+autoplot(gold)
+is.ts(gold)
+```
+
+```{r}
+autoplot(woolyrnq)
+is.ts(woolyrnq)
+```
+
+```{r}
+autoplot(gas)
+is.ts(gas)
+```
+
+```{r}
+#Question 1: Use the help function to explore what the series gold, woolyrnq and gas represent. 
+
+#b. What is the frequency of each series? Hint: apply the frequency() function.
+
+frequency(gold)
+```
+
+```{r}
+frequency(woolyrnq)
+```
+
+```{r}
+frequency(gas)
+```
+
+```{r}
+#Answers: 
+# 1, 4, 12 (respectively)
+```
+
+```{r}
+#Question 1. Use the help function to explore what the series gold, woolyrnq and gas represent.
+
+#c. Use which.max() to spot the outlier in the gold series. Which observation was it?
+
+which.max(gold)
+gold
+
+#Answer:
+# The 770th observation is the outlier.
+```
+
+```{r}
+#Question 2: Download the file tute1.csv from the book website, open it in Excel (or some other spreadsheet application), and review its contents. You should find four columns of information. Columns B through D each contain a quarterly series, labelled Sales, AdBudget and GDP. Sales contains the quarterly sales for a small company over the period 1981-2005. AdBudget is the advertising budget and GDP is the gross domestic product. All series have been adjusted for inflation.
+
+#a. You can read the data into R with the following script:
+tute1 <- read.csv("tute1.csv", header=TRUE)
+tute1
+```
+
+```{r}
+#b. Convert the data to time series
+mytimeseries <- ts(tute1[,-1], start=1981, frequency=4)
+
+#Note: (The [,-1] removes the first column which contains the quarters as we don’t need them now.)
+```
+
+```{r}
+#c. Construct time series plots of each of the three series
+
+autoplot(mytimeseries, facets=TRUE)
+autoplot(mytimeseries)
+
+#Note: when you don't include facets=TRUE, the plots are not colored and it is separated into 3 different parts. In each data set, there might be more than 1 data so we want to read them in separate plots. If not, sometimes graphs may overlap which makes it confusing to observe.
+```
+
+```{r}
+#Question 4: Create time plots of the following time series: bicoal, chicken, dole, usdeaths, lynx, goog, writing, fancy, a10, h02.
+
+#Use help() to find out about the data in each series.
+#For the goog plot, modify the axis labels and title.
+
+help(bicoal)
+bicoal
+autoplot(bicoal)
+```
+
+```{r}
+help(chicken)
+chicken
+autoplot(chicken)
+```
+
+```{r}
+help(dole)
+dole
+autoplot(dole)
+```
+
+```{r}
+help(usdeaths)
+usdeaths
+autoplot(usdeaths)
+```
+
+```{r}
+help(lynx)
+lynx
+autoplot(lynx)
+```
+
+```{r}
+help(goog)
+goog
+autoplot(goog) + 
+  ggtitle("Daily closing stock prices of Google Inc") +
+  xlab("Consecutive Trading Days (between 25 February 2013 and 13 February 2017)") +
+  ylab("Closing Stock Prices")
+
+#Note: do not need to load in ggplot
+```
+
+```{r}
+help(writing)
+writing
+autoplot(writing)
+```
+
+```{r}
+help(fancy)
+fancy
+autoplot(fancy)
+```
+
+```{r}
+help(a10)
+a10
+autoplot(a10)
+```
+
+```{r}
+help(h02)
+h02
+autoplot(h02)
+```
+
+
+

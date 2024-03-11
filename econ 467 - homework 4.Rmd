@@ -1,0 +1,31 @@
+---
+title: "econ 467 - homework 4"
+output: html_document
+date: "2024-02-16"
+---
+
+```{r}
+setwd("/Users/kimberlynguyen/Desktop")
+
+library(fpp2)
+library(readxl)
+library(tidyverse)
+
+data = read_xlsx("/Users/kimberlynguyen/Desktop/econ 467 - homework 4/data4.xlsx")
+view(data)
+
+tsdata <- ts(data[,2], start=1, frequency=1)
+view(tsdata)
+```
+
+```{r}
+ggtsdisplay(tsdata)
+```
+
+```{r}
+ggAcf(tsdata)
+```
+
+ANSWER:
+
+In i, E(Yt) = 10, V(Yt) = 1.2069, Cov(Yt, Yt-1) = 0.567, Rho 1 Hat = 0.4698. In ii, E(Yt) = 0, V(Yt) = 1.25, Cov(Yt, Yt-1) = -0.4, Rho 1 Hat = -0.4. From the graphs above, we can see that the data has a theoretical mean of about 0 as the data is quite stationary and linear there. Additionally, the ACF plot shows that the correlation is to about -0.4 (a little past). Thus, we can say that this dataset is NOT representative of i since its theoretical mean is 10 and Rho 1 Hat = 0.4698. Rather, it is more representative of ii, where the theoretical mean is 0 and Rho 1 Hat = -0.4.

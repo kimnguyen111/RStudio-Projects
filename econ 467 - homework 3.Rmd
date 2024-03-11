@@ -1,0 +1,149 @@
+---
+title: "econ 467 - homework 3"
+name: "Kimberly Nguyen"
+output: html_document
+---
+
+```{r}
+setwd("/Users/kimberlynguyen/Desktop")
+
+library(fpp2)
+library(readxl)
+library(tidyverse)
+
+data = read_xls("/Users/kimberlynguyen/Desktop/econ 467 - homework 3/GDPC1.xls")
+view(data)
+
+GDP = read_xlsx("/Users/kimberlynguyen/Desktop/econ 467 - homework 3/GDPC1.xlsx", range="A1:K32")
+view(GDP)
+
+GDPdata <- ts(GDP[,2], start=1987, frequency=1)
+view(GDPdata)
+```
+
+**QUESTION 1**
+
+i.  Spreadsheet:
+
+    ![](question%201.png)
+
+ii. Now use R to generate these three autocorrelations. Report these autocorrelations. How do these numbers compare with the ones you obtained in your Excel spread sheet in part (a) above? Plot the correlogram using the first three autocorrelations.
+
+```{r}
+ggAcf(diff(GDPdata), lag=3, plot=FALSE)
+
+ggAcf(diff(GDPdata), lag=3)
+```
+
+iii. Is the change (as captured in the first difference) in the U.S. real GDP a white noise process? Use the Bartlett test separately on each of the first three autocorrelations that you have obtained above. What is your null hypothesis in each test? Alternative hypothesis? Rejection criterion? What conclusion do you draw from the tests? Why? (Do not use R for this part of the question.)
+
+```{r}
+dlnGDP = diff(log(GDPdata))
+dlnGDP
+```
+
+Hypothesis
+
+H0: P=0 (P is Rho)
+
+HA: P!=0
+
+Bartlett Band
+
+t=30, 2/sqrt(t) = 2/sqrt(30) = 0.365148
+
+Test
+
+Lag 1: Phat=0.341, 0.341 \< 0.365148 =\> Reject Null
+
+Lag 2: Phat=0.068, 0.068 \< 0.365148 =\> Reject Null
+
+Lag 3: Phat=-0.177, \|-0.177\| \< 0.365148 =\> Reject Null
+
+ANSWER: Since all of the lags end up rejecting the null hypothesis, we can say pretty confidently that this is White Noise.
+
+iv. Do both -- individual and joint - white noise tests using R. What conclusion do you draw from the tests? Why? What are the null hypotheses in the joint test? What is the alternative hypothesis? What is your rejection criterion in the joint test? What is your conclusion? Why?
+
+```{r}
+ggtsdisplay(diff(GDPdata), main = "Changes in Yearly GDP")
+```
+
+```{r}
+#INDIVIDUAL TEST
+Box.test(dlnGDP, lag=10, type=c("Lj"))
+```
+
+```{r}
+#JOINT TEST DISPLAY
+Box.test(diff(GDPdata), lag=10, type="Lj")
+```
+
+Hypothesis
+
+H0: P1=0, P2=0, P3=0
+
+H1: H0 is not true
+
+ANSWER: Since the p-value for the individual test is 0.5517 and the p-value for the joint test is 0.2894, both are greater than 5% (assuming 95% significance) meaning we fail reject the null hypothesis, hence the dataset is White Noise.
+
+**QUESTION 2**
+
+a.  Suppose you are a weather forecaster at a TV station for your city. You forecast the probability of rain the following day among other things. You know that people hate to be caught up in rain unprepared. You also know that they feel less irritated than in the former situation if they carried an umbrella based on the day's forecast but the rain never materialized. And, of course, you do care how your viewers feel about your forecasts, because your job and salary depend on the viewers' ratings.
+
+ANSWER: Asymmetric. If you overforecast the height of the snow to be 12 inches and it end up being 5 inches, then that is okay because the people will be prepared for the 12 inches of snow. If you underforecast (flip), then the people will not be prepared for the 12 inches of snow, and that can even cause accidents and other worse payoffs.
+
+b.  Your forecast project involves projecting water flows in a river in order to determine the height of the dam that is going to be built.
+
+ANSWER: Somewhat symmetric: If you overforecast the height of the damn then the cost will be higher and excessive water may or may not flow in the damns which may cause issues that need to be fixed down the line, costing even more money. However, it can be asymmetric in the sense that if you underforecast, the water may overflow and that can incur even greater damage costs.
+
+c.  A person is trying to project her post retirement expenses. Based on that she will determine how much money from her current earnings she will have to set aside.
+
+ANSWER: Asymmetric: If this person is a big spender, then it is in their favor to overforecast because it will allow them to spend the amount they can and know for sure they will have enough for their retirement expense. If they underforecast, then they will spend their necessary current earnings and thus not have enough for their retirement expense. In this question, it really may change depending on the kind of person we are looking at. But overall, it is alwauys better to overforecast on future spendings in order to budget correctly.
+
+**QUESTION 3**
+
+a.  P(Y) values are indicated in the screenshot
+
+b.  E(Y) = 9.76
+
+c.  P(Y\|X=4) values are indicated in the "4" column of the Conditional Dsitribution of Y (conditional of x)
+
+d.  E(Y\|X=4) = 11
+
+e.  No, E(Y) is not the same as E(Y\|X=4) because 9.76 is not equal to 11.
+
+![](question%203.png){width="479"}
+
+**TEXTBOOK QUESTIONS**
+
+**QUESTION 9**
+
+The pigs data shows the monthly total number of pigs slaughtered in Victoria, Australia, from Jan 1980 to Aug 1995. Use mypigs \<- window(pigs, start=1990) to select the data starting from 1990. Use autoplot and ggAcf for mypigs series and compare these to white noise plots from Figures 2.17 and 2.18.
+
+```{r}
+mypigs <- window(pigs, start=1990)
+
+autoplot(mypigs)
+```
+
+```{r}
+ggAcf(mypigs)
+```
+
+ANSWER: When using the autoplot, the first graph is not a white noise because it has a slight increasing trend and it looks like their autocorrelation is not close to 0. Similar to the ggAcf plot, the data surpasses the Bartlett bands, meaning it is not White Noise.
+
+**QUESTION 10**
+
+dj contains 292 consecutive trading days of the Dow Jones Index. Use ddj \<- diff(dj) to compute the daily changes in the index. Plot ddj and its ACF. Do the changes in the Dow Jones Index look like white noise?
+
+```{r}
+ddj <- diff(dj)
+
+autoplot(ddj)
+```
+
+```{r}
+ggAcf(ddj)
+```
+
+ANSWER: Both of these plots are White Noise. With autoplot, the graph appears to be stationary which may mean that the autocorrelation is 0 or close to 0. Similarly, with ggAcf, the graph data is within the Bartlett bands, also indicating that it is White Noise.
